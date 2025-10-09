@@ -1,3 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.artarch.tiktok_mobile_sdk">
+    package="com.artarch.tiktok_mobile_sdk">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <activity
+        android:name=".ShareActivity"
+        android:exported="true"
+        android:launchMode="singleTask" />
 </manifest>
