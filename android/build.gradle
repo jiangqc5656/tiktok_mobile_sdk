@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.tiktok.open.sdk:tiktok-open-sdk-auth:2.4.0' 
     implementation 'com.tiktok.open.sdk:tiktok-open-sdk-share:2.4.0'
     implementation 'com.google.android.gms:play-services-base:18.9.0'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.2.0'
 
 //    implementation files("libs/flutter_embedding_debug.jar")
 }
