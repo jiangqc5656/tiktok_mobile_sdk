@@ -1,0 +1,58 @@
+group = "com.artarch.tiktok_mobile_sdk"
+version = "1.0-SNAPSHOT"
+
+buildscript {
+    ext.kotlin_version = "1.8.22"
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.1.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://artifact.bytedance.com/repository/AwemeOpenSDK' }
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.artarch.tiktok_mobile_sdk'
+    }
+
+    compileSdkVersion = 35
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
+
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+    }
+
+    defaultConfig {
+        minSdk = 21
+    }
+}
+
+dependencies {
+    implementation "androidx.browser:browser:1.3.0"
+    implementation 'com.tiktok.open.sdk:tiktok-open-sdk-core:2.4.0'
+    implementation 'com.tiktok.open.sdk:tiktok-open-sdk-auth:2.4.0' 
+    implementation 'com.tiktok.open.sdk:tiktok-open-sdk-share:2.4.0' 
+}
