@@ -2,14 +2,14 @@ group = "com.artarch.tiktok_mobile_sdk"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "1.8.22"
+    ext.kotlin_version = "2.1.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.0")
+        classpath("com.android.tools.build:gradle:8.12.3")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
@@ -30,7 +30,7 @@ android {
         namespace 'com.artarch.tiktok_mobile_sdk'
     }
 
-    compileSdkVersion = 35
+    compileSdkVersion = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
