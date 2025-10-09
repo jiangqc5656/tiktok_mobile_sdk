@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String loginResult = '';
+  String shareResult = '';
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +33,29 @@ class _MyAppState extends State<MyApp> {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  final result = await TikTokSDK.instance.login(
-                      permissions: {TikTokPermissionType.userInfoBasic, TikTokPermissionType.videoList}, redirectUri: "...");
+                  final result = await TikTokSDK.instance.login(permissions: {
+                    TikTokPermissionType.userInfoBasic,
+                    TikTokPermissionType.videoList
+                  }, redirectUri: "...");
                   setState(() => loginResult = result.toString());
                 },
                 child: const Text('Tiktok sdk 2.0 Login'),
               ),
               const SizedBox(height: 16),
               Text('Login result: $loginResult'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  final result = await TikTokSDK.instance.share(
+                    localIdentifiers: ['/storage/emulated/0/Movies/video.mp4'],
+                    redirectUri: 'your_redirect_uri',
+                    greenScreenEnabled: true,
+                  );
+                  setState(() => shareResult = result.toString());
+                },
+                child: const Text('Tiktok sdk 2.0 Share'),
+              ),
+              Text('share result: $shareResult'),
             ],
           ),
         ),

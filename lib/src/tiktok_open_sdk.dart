@@ -88,7 +88,7 @@ class TikTokSDK {
   ///
   /// [permissionType] You must apply for permissions at the time of app registration.
   Future<TikTokShareResult> share({
-    required Set<String> localIdentifiers,
+    required List<String> localIdentifiers,
     required String redirectUri,
     required bool greenScreenEnabled,
   }) async {
