@@ -1,10 +1,10 @@
 name: tiktok_mobile_sdk
 description: "TikTok OpenSDK."
-version: 0.0.3
+version: 0.0.4
 homepage:
 
 environment:
-  sdk: ^3.6.2
+  sdk: ^3.6.1
   flutter: '>=3.3.0'
 
 dependencies:
