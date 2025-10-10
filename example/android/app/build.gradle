@@ -1,6 +1,8 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
+    // 添加 Kotlin Parcelize 插件
+    id "kotlin-parcelize"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -24,7 +26,7 @@ android {
         applicationId = "com.artarch.tiktok_mobile_sdk_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -36,6 +38,11 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
+    }
+
+    dependencies {
+        implementation 'com.google.android.gms:play-services-base:18.9.0'
+        implementation 'com.google.android.gms:play-services-ads-identifier:18.2.0'
     }
 }
 
