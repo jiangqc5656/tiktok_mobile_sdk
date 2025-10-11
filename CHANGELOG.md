@@ -1,3 +1,11 @@
+## 0.0.5
+
+- 修复 TikTokShare iOS 错误
+
+## 0.0.4
+
+- Flutter 降级
+
 ## 0.0.3
 
 - Add TikTokShare For iOS

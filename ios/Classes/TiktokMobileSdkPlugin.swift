@@ -111,7 +111,7 @@ public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin {
         result(
           FlutterError(
             code: String(shareResponse.errorCode.rawValue),
-            message: shareResponse.errorMessage ?? "", details: nil))
+            message: shareResponse.errorDescription ?? "", details: nil))
       }
     }
   }
