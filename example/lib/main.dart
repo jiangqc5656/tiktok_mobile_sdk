@@ -33,10 +33,8 @@ class _MyAppState extends State<MyApp> {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  final result = await TikTokSDK.instance.login(permissions: {
-                    TikTokPermissionType.userInfoBasic,
-                    TikTokPermissionType.videoList
-                  }, redirectUri: "...");
+                  final result = await TikTokSDK.instance.login(
+                      permissions: {TikTokPermissionType.userInfoBasic, TikTokPermissionType.videoList}, redirectUri: "...");
                   setState(() => loginResult = result.toString());
                 },
                 child: const Text('Tiktok sdk 2.0 Login'),
@@ -49,6 +47,7 @@ class _MyAppState extends State<MyApp> {
                   final result = await TikTokSDK.instance.share(
                     localIdentifiers: ['/storage/emulated/0/Movies/video.mp4'],
                     redirectUri: 'your_redirect_uri',
+                    isVideo: true,
                     greenScreenEnabled: true,
                   );
                   setState(() => shareResult = result.toString());
