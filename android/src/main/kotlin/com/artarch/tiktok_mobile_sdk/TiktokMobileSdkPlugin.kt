@@ -21,8 +21,8 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 
 /** FlutterTiktokSdkPlugin */
-class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
-    PluginRegistry.NewIntentListener {
+class TiktokMobileSdkPlugin :
+        FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.NewIntentListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -33,12 +33,13 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
     var activity: Activity? = null
     private var activityPluginBinding: ActivityPluginBinding? = null
     private var loginResult: Result? = null
+    private var printLog = false
 
     override fun onAttachedToEngine(
-        @NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
+            @NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
     ) {
         channel =
-            MethodChannel(flutterPluginBinding.binaryMessenger, "com.artarch.tiktok_mobile_sdk")
+                MethodChannel(flutterPluginBinding.binaryMessenger, "com.artarch.tiktok_mobile_sdk")
         channel.setMethodCallHandler(this)
     }
 
@@ -53,18 +54,18 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 val activity = activity
                 if (activity == null) {
                     result.error(
-                        "no_activity_found",
-                        "There is no valid Activity found to present TikTok SDK Login screen.",
-                        null
+                            "no_activity_found",
+                            "There is no valid Activity found to present TikTok SDK Login screen.",
+                            null
                     )
                     return
                 }
 
                 clientKey = call.argument<String?>("clientKey")
+                printLog = call.argument<Boolean>("printLog") ?: false
                 authApi = AuthApi(activity = activity)
                 result.success(null)
             }
-
             "login" -> {
                 val scope = call.argument<String>("scope")
                 val state = call.argument<String>("state")
@@ -72,14 +73,20 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 var browserAuthEnabled = call.argument<Boolean>("browserAuthEnabled")
 
                 codeVerifier = PKCEUtils.generateCodeVerifier()
+                if (printLog) {
+                    println(
+                            "clientKey: $clientKey, codeVerifier: $codeVerifier, redirectUrl: $redirectUrl"
+                    )
+                }
 
-                val request = AuthRequest(
-                    clientKey = clientKey ?: "",
-                    scope = scope ?: "",
-                    redirectUri = redirectUrl,
-                    state = state,
-                    codeVerifier = codeVerifier,
-                )
+                val request =
+                        AuthRequest(
+                                clientKey = clientKey ?: "",
+                                scope = scope ?: "",
+                                redirectUri = redirectUrl,
+                                state = state,
+                                codeVerifier = codeVerifier,
+                        )
                 //        val authType = if (browserAuthEnabled == true) {
                 //          AuthApi.AuthMethod.ChromeTab
                 //        } else {
@@ -89,9 +96,9 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
                 authApi.authorize(request, authType)
                 loginResult = result
             }
-
             "share" -> {
-                val mediaPathsFlutter = call.argument<List<String>>("localIdentifiers") ?: emptyList()
+                val mediaPathsFlutter =
+                        call.argument<List<String>>("localIdentifiers") ?: emptyList()
                 // 转换为 ArrayList<String>
                 val mediaPaths: ArrayList<String> = ArrayList(mediaPathsFlutter)
 
@@ -100,51 +107,61 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
 
                 shareToTikTok(mediaPaths, redirectUri, greenScreenEnabled, result)
             }
-
             else -> result.notImplemented()
         }
     }
 
-
     private fun shareToTikTok(
-        mediaPaths: ArrayList<String>,
-        redirectUri: String,
-        greenScreenEnabled: Boolean,
-        result: Result
+            mediaPaths: ArrayList<String>,
+            redirectUri: String,
+            greenScreenEnabled: Boolean,
+            result: Result
     ) {
-        val activity = activity ?: run {
-            result.error("no_activity_found", "No Activity found", null)
-            return
-        }
+        val activity =
+                activity
+                        ?: run {
+                            result.error("no_activity_found", "No Activity found", null)
+                            return
+                        }
 
         try {
             // Step 1: 初始化 ShareApi
             val shareApi = ShareApi(activity = activity)
 
             // Step 2: 创建 MediaContent
-            val mediaContent = MediaContent(
-                mediaType = if (mediaPaths.firstOrNull()?.endsWith(".mp4") == true) {
-                    MediaType.VIDEO
-                } else {
-                    MediaType.IMAGE
-                }, mediaPaths = mediaPaths
-            )
+            val mediaContent =
+                    MediaContent(
+                            mediaType =
+                                    if (mediaPaths.firstOrNull()?.endsWith(".mp4") == true) {
+                                        MediaType.VIDEO
+                                    } else {
+                                        MediaType.IMAGE
+                                    },
+                            mediaPaths = mediaPaths
+                    )
 
             // Step 3: 分享格式
-            val shareFormat = if (greenScreenEnabled) {
-                Format.GREEN_SCREEN
-            } else {
-                Format.DEFAULT
-            }
+            val shareFormat =
+                    if (greenScreenEnabled) {
+                        Format.GREEN_SCREEN
+                    } else {
+                        Format.DEFAULT
+                    }
 
             // Step 4: 构建 ShareRequest
-            val request = ShareRequest(
-                clientKey = clientKey ?: "",
-                mediaContent = mediaContent,
-                shareFormat = shareFormat,
-                packageName = activity.packageName,
-                resultActivityFullPath = "${activity.packageName}.ShareActivity" // 你需要创建一个空的 ShareActivity 来接收回调
-            )
+            val request =
+                    ShareRequest(
+                            clientKey = clientKey ?: "",
+                            mediaContent = mediaContent,
+                            shareFormat = shareFormat,
+                            packageName = activity.packageName,
+                            resultActivityFullPath =
+                                    "${activity.packageName}.ShareActivity" // 你需要创建一个空的
+                            // ShareActivity 来接收回调
+                            )
+            if (printLog) {
+                println("clientKey: $clientKey, mediaContent: $mediaContent")
+            }
 
             // 调用 SDK 分享
             shareApi.share(request)
@@ -155,7 +172,6 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
             result.error("share_error", e.localizedMessage, null)
         }
     }
-
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
@@ -193,19 +209,20 @@ class TiktokMobileSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
         authApi.getAuthResponseFromIntent(intent, redirectUrl = redirectUrl)?.let {
             val authCode = it.authCode
             if (authCode.isNotEmpty()) {
-                var resultMap = mapOf(
-                    "authCode" to authCode,
-                    "state" to it.state,
-                    "grantedPermissions" to it.grantedPermissions,
-                    "codeVerifier" to codeVerifier
-                )
+                var resultMap =
+                        mapOf(
+                                "authCode" to authCode,
+                                "state" to it.state,
+                                "grantedPermissions" to it.grantedPermissions,
+                                "codeVerifier" to codeVerifier
+                        )
                 loginResult?.success(resultMap)
             } else {
                 // Returns an error if authentication fails
                 loginResult?.error(
-                    it.errorCode.toString(),
-                    it.errorMsg,
-                    null,
+                        it.errorCode.toString(),
+                        it.errorMsg,
+                        null,
                 )
             }
         }
