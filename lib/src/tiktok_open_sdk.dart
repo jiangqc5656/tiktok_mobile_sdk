@@ -82,7 +82,8 @@ class TikTokSDK {
   Future<TikTokShareResult> share({
     required List<String> localIdentifiers,
     required String redirectUri,
-    required bool greenScreenEnabled,
+    required bool isVideo,
+    bool greenScreenEnabled = false,
   }) async {
     try {
       final result = await _channel.invokeMapMethod<String, Object>(
@@ -90,7 +91,8 @@ class TikTokSDK {
         <String, dynamic>{
           'localIdentifiers': localIdentifiers,
           'redirectUri': redirectUri,
-          "greenScreenEnabled": greenScreenEnabled
+          "isVideo": isVideo,
+          "greenScreenEnabled": greenScreenEnabled,
         },
       );
 

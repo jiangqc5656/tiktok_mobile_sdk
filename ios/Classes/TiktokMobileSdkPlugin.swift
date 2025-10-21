@@ -110,23 +110,26 @@ public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin {
       return
     }
 
-    var isVideo = false
-    // 获取第一个元素
-    if let firstIdentifier = localIdentifiers.first {
-      isVideo = isVideoFile(firstIdentifier)
-    } else {
-        result(FlutterError(code: "empty.array", message: "localIdentifiers数组为空", details: nil))
-        return
+    guard let isVideo = args["isVideo"] as? Bool else {
+      result(FlutterError.failedArgumentField("isVideo", type: Bool.self))
+      return
+    }
+
+    guard let greenScreenEnabled = args["greenScreenEnabled"] as? Bool else {
+      result(FlutterError.failedArgumentField("greenScreenEnabled", type: Bool.self))
+      return
     }
 
     if printLog {
-      print("tiktok share = localIdentifiers: \(localIdentifiers) redirectURI: \(redirectURI)")
+      print(
+        "tiktok share = localIdentifiers: \(localIdentifiers) redirectURI: \(redirectURI) isVideo: \(isVideo) greenScreenEnabled: \(greenScreenEnabled)"
+      )
     }
 
     let shareRequest = TikTokShareRequest(
-      localIdentifiers: localIdentifiers,
-      mediaType: isVideo ? .video : .image,
+      localIdentifiers: localIdentifiers, mediaType: isVideo ? .video : .image,
       redirectURI: redirectURI)
+    shareRequest.shareFormat = greenScreenEnabled ? .normal : .greenScreen
     self.shareRequest = shareRequest
     shareRequest.send { [weak self] response in
       guard let self = self, let shareResponse = response as? TikTokShareResponse else { return }
@@ -144,20 +147,6 @@ public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin {
             message: shareResponse.errorDescription ?? "", details: nil))
       }
     }
-  }
-
-  // 判断文件是否为视频的方法
-  private func isVideoFile(_ fileName: String) -> Bool {
-    // 定义常见的视频文件扩展名
-    let videoExtensions = ["mp4", "mov", "m4v", "avi", "wmv", "flv", "mkv", "webm", "mpeg", "mpg"]
-    
-    // 获取文件扩展名（转为小写进行比较）
-    if let fileExtension = fileName.split(separator: ".").last?.lowercased() {
-        // 检查扩展名是否在视频扩展名列表中
-        return videoExtensions.contains(fileExtension)
-    }
-    
-    return false
   }
 }
 
