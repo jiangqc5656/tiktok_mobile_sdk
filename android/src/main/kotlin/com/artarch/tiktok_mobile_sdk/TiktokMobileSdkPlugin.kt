@@ -104,8 +104,9 @@ class TiktokMobileSdkPlugin :
 
                 val redirectUri = call.argument<String>("redirectUri") ?: ""
                 val greenScreenEnabled = call.argument<Boolean>("greenScreenEnabled") ?: false
+                val isVideo = call.argument<Boolean>("isVideo") ?: false
 
-                shareToTikTok(mediaPaths, redirectUri, greenScreenEnabled, result)
+                shareToTikTok(mediaPaths, redirectUri, isVideo, greenScreenEnabled, result)
             }
             else -> result.notImplemented()
         }
@@ -114,6 +115,7 @@ class TiktokMobileSdkPlugin :
     private fun shareToTikTok(
             mediaPaths: ArrayList<String>,
             redirectUri: String,
+            isVideo: Boolean,
             greenScreenEnabled: Boolean,
             result: Result
     ) {
@@ -132,7 +134,7 @@ class TiktokMobileSdkPlugin :
             val mediaContent =
                     MediaContent(
                             mediaType =
-                                    if (mediaPaths.firstOrNull()?.endsWith(".mp4") == true) {
+                                    if (isVideo) {
                                         MediaType.VIDEO
                                     } else {
                                         MediaType.IMAGE

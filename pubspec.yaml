@@ -1,6 +1,6 @@
 name: tiktok_mobile_sdk
 description: "TikTok OpenSDK."
-version: 0.0.9
+version: 0.0.11
 homepage:
 
 environment:
