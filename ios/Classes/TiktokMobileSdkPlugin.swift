@@ -4,13 +4,16 @@ import TikTokOpenSDKCore
 import TikTokOpenShareSDK
 import UIKit
 
-public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin {
+public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
       name: "com.artarch.tiktok_mobile_sdk", binaryMessenger: registrar.messenger())
     let instance = TiktokMobileSdkPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
+    if #available(iOS 13.0, *) {
+      registrar.addSceneDelegate(instance)
+    }
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -147,6 +150,56 @@ public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin {
             message: shareResponse.errorDescription ?? "", details: nil))
       }
     }
+  }
+
+  public func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    if printLog {
+      print("tiktok callback open url = \(url.absoluteString)")
+    }
+    return TikTokURLHandler.handleOpenURL(url)
+  }
+
+  public func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    guard let url = userActivity.webpageURL else {
+      return false
+    }
+    if printLog {
+      print("tiktok callback universal link = \(url.absoluteString)")
+    }
+    return TikTokURLHandler.handleOpenURL(url)
+  }
+
+  @available(iOS 13.0, *)
+  public func scene(
+    _ scene: UIScene,
+    openURLContexts URLContexts: Set<UIOpenURLContext>
+  ) -> Bool {
+    guard let url = URLContexts.first?.url else {
+      return false
+    }
+    if printLog {
+      print("tiktok callback scene open url = \(url.absoluteString)")
+    }
+    return TikTokURLHandler.handleOpenURL(url)
+  }
+
+  @available(iOS 13.0, *)
+  public func scene(_ scene: UIScene, continue userActivity: NSUserActivity) -> Bool {
+    guard let url = userActivity.webpageURL else {
+      return false
+    }
+    if printLog {
+      print("tiktok callback scene universal link = \(url.absoluteString)")
+    }
+    return TikTokURLHandler.handleOpenURL(url)
   }
 }
 

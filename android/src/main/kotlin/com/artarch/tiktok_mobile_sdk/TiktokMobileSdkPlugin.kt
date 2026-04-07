@@ -70,7 +70,7 @@ class TiktokMobileSdkPlugin :
                 val scope = call.argument<String>("scope")
                 val state = call.argument<String>("state")
                 redirectUrl = call.argument<String>("redirectUri") ?: ""
-                var browserAuthEnabled = call.argument<Boolean>("browserAuthEnabled")
+                val browserAuthEnabled = call.argument<Boolean>("browserAuthEnabled")
 
                 codeVerifier = PKCEUtils.generateCodeVerifier()
                 if (printLog) {
@@ -87,12 +87,8 @@ class TiktokMobileSdkPlugin :
                                 state = state,
                                 codeVerifier = codeVerifier,
                         )
-                //        val authType = if (browserAuthEnabled == true) {
-                //          AuthApi.AuthMethod.ChromeTab
-                //        } else {
-                //          AuthApi.AuthMethod.TikTokApp
-                //        }
-                var authType = AuthApi.AuthMethod.ChromeTab
+
+                val authType = if (browserAuthEnabled == true) AuthApi.AuthMethod.ChromeTab else AuthApi.AuthMethod.TikTokApp
                 authApi.authorize(request, authType)
                 loginResult = result
             }
