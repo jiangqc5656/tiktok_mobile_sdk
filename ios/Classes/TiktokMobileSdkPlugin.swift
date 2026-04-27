@@ -132,7 +132,7 @@ public class TiktokMobileSdkPlugin: NSObject, FlutterPlugin, FlutterSceneLifeCyc
     let shareRequest = TikTokShareRequest(
       localIdentifiers: localIdentifiers, mediaType: isVideo ? .video : .image,
       redirectURI: redirectURI)
-    shareRequest.shareFormat = greenScreenEnabled ? .normal : .greenScreen
+    shareRequest.shareFormat = greenScreenEnabled ? .greenScreen : .normal
     self.shareRequest = shareRequest
     shareRequest.send { [weak self] response in
       guard let self = self, let shareResponse = response as? TikTokShareResponse else { return }
