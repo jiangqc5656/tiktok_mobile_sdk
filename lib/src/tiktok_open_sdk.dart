@@ -56,7 +56,7 @@ class TikTokSDK {
         return TikTokLoginResult(
           status: result["authCode"] != null ? TikTokLoginStatus.success : TikTokLoginStatus.error,
           authCode: result["authCode"] != null ? result["authCode"] as String : "",
-          codeVerifier: result["codeVerifier"] as String,
+          codeVerifier: result["codeVerifier"] as String?,
           state: result["state"] as String?,
           grantedPermissions: grantedPermissions,
         );

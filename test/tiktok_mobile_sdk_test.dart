@@ -9,22 +9,27 @@ void main() {
 
   final dummyTikTokLoginResult = {
     "authCode": "authCode",
+    "codeVerifier": "codeVerifier",
     "grantedPermissions": TikTokPermissionType.values.map((e) => e.scopeName).join(','),
   };
 
   setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) async {
       switch (methodCall.method) {
         case 'setup':
           return null;
         case 'login':
           return dummyTikTokLoginResult;
       }
-    });
+        return null;
+      },
+    );
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
   });
 
   test('setup', () async {
@@ -36,6 +41,7 @@ void main() {
     expect(result.status, TikTokLoginStatus.success);
     expect(result.state, null);
     expect(result.authCode, 'authCode');
+    expect(result.codeVerifier, 'codeVerifier');
     expect(result.grantedPermissions, TikTokPermissionType.values.toSet());
   });
 }
